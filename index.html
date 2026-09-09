@@ -822,7 +822,7 @@
           </div>
           <div class="price-block">
             <div class="current-price" id="current-price">—</div>
-            <div class="change" id="daily-change">Giá thị trường từ deal OPEN</div>
+            <div class="change" id="daily-change">Giá đóng cửa DNSE · GMT+7</div>
           </div>
         </div>
         <div class="position-summary">
@@ -893,7 +893,7 @@
       <div class="section-title">
         <div>
           <h2 id="chart-heading">Lịch sử giá khớp MBB</h2>
-          <p>Điểm BUY/SELL từ order history, chỉ tính từ 01/07/2026</p>
+            <p>Điểm BUY/SELL từ order history · giờ Việt Nam (GMT+7) · từ 01/07/2026</p>
         </div>
         <div class="chart-controls" aria-label="Chọn khoảng thời gian">
           <button type="button" data-range-days="30">1M</button>
@@ -917,7 +917,7 @@
         <div class="section-title">
           <div>
             <h2 id="ledger-heading">Lịch sử mua bán</h2>
-            <p>Chỉ hiển thị khối lượng thực khớp và giá khớp bình quân</p>
+            <p>Chỉ hiển thị khối lượng thực khớp và giá khớp bình quân · giờ Việt Nam (GMT+7)</p>
           </div>
           <div class="filter-row" aria-label="Lọc giao dịch">
             <button type="button" class="filter-button active" data-side="ALL">Tất cả</button>
@@ -1150,14 +1150,15 @@
     "positionsSource": "DNSE get_positions API",
     "marketPriceSource": "DNSE get_close_price API",
     "ordersSource": "DNSE order history / buysell.py / SQLite",
-    "generatedAt": "2026-09-09T15:29:28+07:00",
-    "generatedAtDisplay": "09/09/2026 15:29:28",
-    "sourceUpdatedAt": "2026-09-09T08:29:28.607245+00:00",
+    "generatedAt": "2026-09-09T15:34:49+07:00",
+    "generatedAtDisplay": "09/09/2026 15:34:49",
+    "timezone": "Asia/Ho_Chi_Minh (GMT+7)",
+    "sourceUpdatedAt": "2026-09-09T08:34:49.277683+00:00",
     "dataFrom": "2026-07-01",
     "dataTo": "2026-09-09",
     "matchedOrderCount": 17,
     "accountMasked": "••••••4757",
-    "sha256": "829bea31c5140df74a671396eaf8e3377a000e9144ec77317394ecc24d25d2c6"
+    "sha256": "cbf558023e8349fa36961b973049357e5be3a8f7855878819ca8be67bdeb0d2e"
   }
 }
     /* MBB_DASHBOARD_DATA_END */
@@ -1198,7 +1199,7 @@
 
       document.querySelector("#current-price").textContent = formatNumber(referencePrice);
       document.querySelector("#daily-change").textContent =
-        `${portfolio.openDealCount} deal OPEN · cập nhật ${portfolio.dealUpdatedAt}`;
+        `${portfolio.openDealCount} deal OPEN · cập nhật ${portfolio.dealUpdatedAt} (GMT+7)`;
       document.querySelector("#average-cost").textContent = formatNumber(portfolio.averageCost);
       document.querySelector("#open-quantity").textContent = `${formatNumber(portfolio.quantity)} cp`;
       const positionReturnElement = document.querySelector("#position-return");
@@ -1224,7 +1225,7 @@
         `Dữ liệu thật: ${meta.matchedOrderCount} lệnh MBB đã khớp từ ${meta.dataFrom} đến ${meta.dataTo}.`;
       document.querySelector("#account-masked").textContent = meta.accountMasked;
       document.querySelector("#position-source").textContent = meta.positionsSource;
-      document.querySelector("#updated-at").textContent = meta.generatedAtDisplay;
+      document.querySelector("#updated-at").textContent = `${meta.generatedAtDisplay} (GMT+7)`;
       document.querySelector("#matched-count").textContent = formatNumber(meta.matchedOrderCount);
       document.querySelector("#deal-updated-at").textContent = portfolio.dealUpdatedAt;
       document.querySelector("#snapshot-hash").innerHTML =
