@@ -171,6 +171,54 @@
       letter-spacing: 0.1em;
     }
 
+    .strategy-card {
+      display: grid;
+      grid-template-columns: minmax(190px, 0.75fr) minmax(0, 2fr);
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 18px 20px;
+      border-color: rgba(83, 245, 166, 0.28);
+      background:
+        linear-gradient(110deg, rgba(83, 245, 166, 0.11), transparent 48%),
+        linear-gradient(145deg, rgba(16, 32, 27, 0.98), rgba(8, 20, 17, 0.98));
+    }
+
+    .strategy-title {
+      margin: 0;
+      color: var(--green);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 18px;
+      letter-spacing: 0.02em;
+    }
+
+    .strategy-copy {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .strategy-rules {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .strategy-rule {
+      padding: 8px 10px;
+      border: 1px solid rgba(82, 217, 237, 0.25);
+      border-radius: 8px;
+      color: #c8fff0;
+      background: rgba(82, 217, 237, 0.07);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 11px;
+    }
+
+    .strategy-rule strong {
+      color: var(--cyan);
+    }
+
     .hero {
       display: grid;
       grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.75fr);
@@ -665,10 +713,15 @@
 
       .position-card,
       .performance-card,
+      .strategy-card,
       .chart-card,
       .ledger-card,
       .verification-card {
         padding: 19px;
+      }
+
+      .strategy-card {
+        grid-template-columns: 1fr;
       }
 
       .ticker-line {
@@ -741,6 +794,23 @@
       <span class="demo-chip">SNAPSHOT</span>
       <span id="data-banner-text">Dữ liệu lệnh MBB đã khớp, được làm sạch từ DNSE order history.</span>
     </div>
+
+    <section class="card strategy-card" aria-labelledby="strategy-heading">
+      <div>
+        <p class="eyebrow">EXECUTION PLAYBOOK</p>
+        <h2 class="strategy-title" id="strategy-heading">DCA THEO GIÁ GIẢM</h2>
+        <p class="strategy-copy">
+          Chiến lược tích lũy MBB: chỉ giải ngân khi giá đang đỏ và còn dưới
+          ngưỡng 21.000 đồng.
+        </p>
+      </div>
+      <div class="strategy-rules" aria-label="Quy tắc chiến lược DCA">
+        <span class="strategy-rule"><strong>ĐIỀU KIỆN</strong> giá đỏ</span>
+        <span class="strategy-rule"><strong>GIỚI HẠN</strong> &lt; 21.000 đ</span>
+        <span class="strategy-rule"><strong>KHỐI LƯỢNG</strong> 1 cổ / mỗi mức giá giảm</span>
+        <span class="strategy-rule"><strong>DỪNG MUA</strong> giá không đỏ hoặc ≥ 21.000 đ</span>
+      </div>
+    </section>
 
     <section class="hero" aria-label="Tổng quan vị thế MBB">
       <article class="card position-card">
@@ -1080,14 +1150,14 @@
     "positionsSource": "DNSE get_positions API",
     "marketPriceSource": "DNSE get_close_price API",
     "ordersSource": "DNSE order history / buysell.py / SQLite",
-    "generatedAt": "2026-09-09T15:23:29+07:00",
-    "generatedAtDisplay": "09/09/2026 15:23:29",
-    "sourceUpdatedAt": "2026-09-09T08:23:29.773048+00:00",
+    "generatedAt": "2026-09-09T15:28:56+07:00",
+    "generatedAtDisplay": "09/09/2026 15:28:56",
+    "sourceUpdatedAt": "2026-09-09T08:28:56.572180+00:00",
     "dataFrom": "2026-07-01",
     "dataTo": "2026-09-09",
     "matchedOrderCount": 17,
     "accountMasked": "••••••4757",
-    "sha256": "682c40c1df63169d1c1cd25b4c862c5e8460cd1de415d42408eb0bec9da2b053"
+    "sha256": "7d9e7a64f19caadc8e382bebed4de35c809d01f5f9cdd2a98dcdc50c9d1087ea"
   }
 }
     /* MBB_DASHBOARD_DATA_END */
