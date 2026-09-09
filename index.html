@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>MBB Performance Ledger — Demo</title>
+  <style>
+    :root {
+      --bg: #06100e;
+      --surface: #0b1714;
+      --surface-2: #10201b;
+      --surface-3: #152a23;
+      --line: rgba(145, 255, 207, 0.13);
+      --line-strong: rgba(145, 255, 207, 0.25);
+      --text: #effff8;
+      --muted: #89a99d;
+      --green: #53f5a6;
+      --green-soft: rgba(83, 245, 166, 0.12);
+      --cyan: #52d9ed;
+      --yellow: #ffd166;
+      --red: #ff6b7a;
+      --shadow: 0 24px 64px rgba(0, 0, 0, 0.38);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 320px;
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 0%, rgba(83, 245, 166, 0.11), transparent 27rem),
+        radial-gradient(circle at 96% 12%, rgba(82, 217, 237, 0.08), transparent 24rem),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      content: "";
+      pointer-events: none;
+      opacity: 0.16;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 75%);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+      padding: 0 32px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 16, 14, 0.84);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand,
+    .market-status,
+    .inline-row,
+    .metric-label,
+    .section-title,
+    .legend,
+    .filter-row,
+    .verification-row,
+    .account-line {
+      display: flex;
+      align-items: center;
+    }
+
+    .brand {
+      gap: 12px;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border: 1px solid rgba(83, 245, 166, 0.55);
+      border-radius: 11px;
+      color: var(--green);
+      background: var(--green-soft);
+      box-shadow: inset 0 0 18px rgba(83, 245, 166, 0.08);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-weight: 800;
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+    }
+
+    .brand-copy span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .market-status {
+      gap: 10px;
+      color: var(--muted);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--yellow);
+      box-shadow: 0 0 13px rgba(255, 209, 102, 0.8);
+    }
+
+    main {
+      width: min(1440px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 28px 0 52px;
+    }
+
+    .demo-banner {
+      display: flex;
+      gap: 13px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+      padding: 13px 16px;
+      border: 1px solid rgba(255, 209, 102, 0.24);
+      border-radius: 13px;
+      color: #fce8b1;
+      background: rgba(255, 209, 102, 0.07);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .demo-chip {
+      flex: 0 0 auto;
+      padding: 3px 7px;
+      border-radius: 5px;
+      color: #07110e;
+      background: var(--yellow);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.75fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(16, 32, 27, 0.98), rgba(8, 20, 17, 0.98));
+      box-shadow: var(--shadow);
+    }
+
+    .position-card {
+      min-height: 254px;
+      padding: 28px;
+    }
+
+    .position-card::after {
+      position: absolute;
+      top: -80px;
+      right: -55px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      content: "";
+      background: rgba(83, 245, 166, 0.07);
+      filter: blur(4px);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .ticker-line {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .ticker-name {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 72px);
+      font-weight: 850;
+      line-height: 0.9;
+      letter-spacing: -0.055em;
+    }
+
+    .company-name {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .price-block {
+      text-align: right;
+    }
+
+    .current-price {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: clamp(29px, 4.2vw, 46px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .change {
+      margin-top: 7px;
+      color: var(--green);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 13px;
+    }
+
+    .position-summary {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 34px;
+      padding-top: 21px;
+      border-top: 1px solid var(--line);
+    }
+
+    .summary-item span,
+    .metric-card span,
+    .verification-row span,
+    .account-line span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .summary-item strong {
+      display: block;
+      margin-top: 8px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: clamp(17px, 2vw, 23px);
+    }
+
+    .performance-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 26px;
+    }
+
+    .performance-ring {
+      display: grid;
+      width: 142px;
+      height: 142px;
+      margin: 4px auto 22px;
+      place-items: center;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, var(--surface) 58%, transparent 59%),
+        conic-gradient(var(--green) 0 72%, rgba(83, 245, 166, 0.1) 72% 100%);
+      box-shadow: 0 0 32px rgba(83, 245, 166, 0.08);
+    }
+
+    .ring-copy {
+      text-align: center;
+    }
+
+    .ring-copy strong {
+      display: block;
+      color: var(--green);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 25px;
+    }
+
+    .ring-copy span {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .benchmark {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 15px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .benchmark strong {
+      color: var(--text);
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .metric-card {
+      min-height: 124px;
+      padding: 20px;
+    }
+
+    .metric-label {
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .metric-icon {
+      display: grid;
+      width: 27px;
+      height: 27px;
+      place-items: center;
+      border-radius: 8px;
+      color: var(--green);
+      background: var(--green-soft);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .metric-value {
+      display: block;
+      margin-top: 20px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: clamp(18px, 2vw, 25px);
+      letter-spacing: -0.04em;
+    }
+
+    .positive {
+      color: var(--green) !important;
+    }
+
+    .negative {
+      color: var(--red) !important;
+    }
+
+    .chart-card {
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .section-title p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chart-controls {
+      display: flex;
+      gap: 5px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.14);
+    }
+
+    .chart-controls button,
+    .filter-button {
+      border: 0;
+      border-radius: 7px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .chart-controls button {
+      min-width: 40px;
+      padding: 7px 9px;
+    }
+
+    .chart-controls button:hover,
+    .chart-controls button.active,
+    .filter-button:hover,
+    .filter-button.active {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .legend {
+      gap: 18px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .legend-item::before {
+      display: inline-block;
+      width: 18px;
+      height: 2px;
+      margin-right: 7px;
+      vertical-align: middle;
+      content: "";
+      background: var(--green);
+    }
+
+    .legend-item.cost::before {
+      background: var(--cyan);
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 340px;
+    }
+
+    #performance-chart {
+      width: 100%;
+      height: 100%;
+    }
+
+    .chart-tooltip {
+      position: absolute;
+      z-index: 3;
+      min-width: 158px;
+      padding: 10px 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 9px;
+      color: var(--text);
+      background: rgba(6, 16, 14, 0.95);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, -110%);
+      transition: opacity 120ms ease;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 11px;
+      line-height: 1.65;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.72fr);
+      gap: 18px;
+    }
+
+    .ledger-card,
+    .verification-card {
+      padding: 24px;
+    }
+
+    .filter-row {
+      gap: 7px;
+    }
+
+    .filter-button {
+      padding: 7px 11px;
+      border: 1px solid transparent;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+
+    th,
+    td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+    }
+
+    th:first-child,
+    td:first-child,
+    th:nth-child(2),
+    td:nth-child(2) {
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    td {
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+
+    tbody tr {
+      transition: background 120ms ease;
+    }
+
+    tbody tr:hover {
+      background: rgba(83, 245, 166, 0.035);
+    }
+
+    .side {
+      display: inline-flex;
+      min-width: 50px;
+      justify-content: center;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+    }
+
+    .side.buy {
+      color: var(--cyan);
+      background: rgba(82, 217, 237, 0.1);
+    }
+
+    .side.sell {
+      color: var(--yellow);
+      background: rgba(255, 209, 102, 0.1);
+    }
+
+    .verification-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      width: fit-content;
+      margin-bottom: 20px;
+      padding: 7px 10px;
+      border: 1px solid rgba(255, 209, 102, 0.23);
+      border-radius: 999px;
+      color: var(--yellow);
+      background: rgba(255, 209, 102, 0.07);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+    }
+
+    .verification-row,
+    .account-line {
+      justify-content: space-between;
+      gap: 16px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .verification-row strong,
+    .account-line strong {
+      text-align: right;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .hash-box {
+      margin-top: 18px;
+      padding: 13px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 10px;
+      color: var(--muted);
+      background: rgba(0, 0, 0, 0.14);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 10px;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+
+    .privacy-note {
+      margin: auto 0 0;
+      padding-top: 20px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 28px 4px 0;
+      color: #617d72;
+      font-size: 10px;
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 0 18px;
+      }
+
+      .market-status span:last-child {
+        display: none;
+      }
+
+      main {
+        width: min(100% - 24px, 1440px);
+        padding-top: 16px;
+      }
+
+      .position-card,
+      .performance-card,
+      .chart-card,
+      .ledger-card,
+      .verification-card {
+        padding: 19px;
+      }
+
+      .ticker-line {
+        display: block;
+      }
+
+      .price-block {
+        margin-top: 28px;
+        text-align: left;
+      }
+
+      .position-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .summary-item strong {
+        margin-top: 0;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-card {
+        min-height: 104px;
+      }
+
+      .metric-value {
+        margin-top: 13px;
+      }
+
+      .section-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .chart-wrap {
+        height: 285px;
+      }
+
+      footer {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">M</div>
+      <div class="brand-copy">
+        <strong>POSITION LEDGER</strong>
+        <span>DNSE Portfolio View</span>
+      </div>
+    </div>
+    <div class="market-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>DEMO DATA · 09/09/2026 15:30</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="demo-banner" role="note">
+      <span class="demo-chip">DEMO</span>
+      <span>Giao diện mẫu với số liệu mô phỏng. Trang này chưa kết nối DNSE API và không đại diện cho vị thế MBB thực tế.</span>
+    </div>
+
+    <section class="hero" aria-label="Tổng quan vị thế MBB">
+      <article class="card position-card">
+        <p class="eyebrow">HOSE / EQUITY / OPEN POSITION</p>
+        <div class="ticker-line">
+          <div>
+            <h1 class="ticker-name">MBB</h1>
+            <div class="company-name">Ngân hàng TMCP Quân Đội</div>
+          </div>
+          <div class="price-block">
+            <div class="current-price" id="current-price">25.850</div>
+            <div class="change" id="daily-change">▲ 250 · +0,98% hôm nay</div>
+          </div>
+        </div>
+        <div class="position-summary">
+          <div class="summary-item">
+            <span>Giá vốn bình quân</span>
+            <strong id="average-cost">22.611</strong>
+          </div>
+          <div class="summary-item">
+            <span>Khối lượng còn giữ</span>
+            <strong id="open-quantity">10.000 cp</strong>
+          </div>
+          <div class="summary-item">
+            <span>Hiệu suất vị thế</span>
+            <strong class="positive" id="position-return">+14,33%</strong>
+          </div>
+        </div>
+      </article>
+
+      <aside class="card performance-card">
+        <div>
+          <p class="eyebrow">TOTAL PERFORMANCE</p>
+          <div class="performance-ring" aria-label="Hiệu suất vị thế 14,33 phần trăm">
+            <div class="ring-copy">
+              <strong id="ring-return">+14,33%</strong>
+              <span>Unrealized</span>
+            </div>
+          </div>
+        </div>
+        <div class="benchmark">
+          <span>So với VN-Index</span>
+          <strong class="positive">+8,13 điểm %</strong>
+        </div>
+      </aside>
+    </section>
+
+    <section class="metrics" aria-label="Chỉ số tài chính">
+      <article class="card metric-card">
+        <div class="metric-label">
+          <span>Tổng giá vốn</span>
+          <span class="metric-icon">₫</span>
+        </div>
+        <strong class="metric-value" id="cost-value">226,11 triệu</strong>
+      </article>
+      <article class="card metric-card">
+        <div class="metric-label">
+          <span>Giá trị thị trường</span>
+          <span class="metric-icon">◆</span>
+        </div>
+        <strong class="metric-value" id="market-value">258,50 triệu</strong>
+      </article>
+      <article class="card metric-card">
+        <div class="metric-label">
+          <span>Lãi/lỗ tạm tính</span>
+          <span class="metric-icon">↗</span>
+        </div>
+        <strong class="metric-value positive" id="unrealized-pnl">+32,39 triệu</strong>
+      </article>
+      <article class="card metric-card">
+        <div class="metric-label">
+          <span>Lãi đã thực hiện</span>
+          <span class="metric-icon">✓</span>
+        </div>
+        <strong class="metric-value positive" id="realized-pnl">+6,36 triệu</strong>
+      </article>
+    </section>
+
+    <section class="card chart-card" aria-labelledby="chart-heading">
+      <div class="section-title">
+        <div>
+          <h2 id="chart-heading">Giá MBB và giá vốn</h2>
+          <p>Điểm BUY/SELL được dựng từ lịch sử lệnh đã khớp</p>
+        </div>
+        <div class="chart-controls" aria-label="Chọn khoảng thời gian">
+          <button type="button" data-range="7">1M</button>
+          <button type="button" data-range="11">3M</button>
+          <button type="button" data-range="15" class="active">ALL</button>
+        </div>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span class="legend-item">Giá MBB</span>
+        <span class="legend-item cost">Giá vốn</span>
+        <span><span class="positive">▲</span> BUY</span>
+        <span><span style="color: var(--yellow)">▼</span> SELL</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="performance-chart" role="img" aria-label="Biểu đồ giá MBB và giá vốn theo thời gian"></canvas>
+        <div class="chart-tooltip" id="chart-tooltip"></div>
+      </div>
+    </section>
+
+    <section class="details-grid">
+      <article class="card ledger-card" aria-labelledby="ledger-heading">
+        <div class="section-title">
+          <div>
+            <h2 id="ledger-heading">Lịch sử mua bán</h2>
+            <p>Chỉ hiển thị khối lượng thực khớp và giá khớp bình quân</p>
+          </div>
+          <div class="filter-row" aria-label="Lọc giao dịch">
+            <button type="button" class="filter-button active" data-side="ALL">Tất cả</button>
+            <button type="button" class="filter-button" data-side="BUY">Mua</button>
+            <button type="button" class="filter-button" data-side="SELL">Bán</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Thời gian</th>
+                <th>Loại</th>
+                <th>Giá khớp TB</th>
+                <th>KL khớp</th>
+                <th>Giá trị</th>
+                <th>Lãi ròng</th>
+              </tr>
+            </thead>
+            <tbody id="trade-rows"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <aside class="card verification-card" aria-labelledby="verification-heading">
+        <div class="section-title">
+          <div>
+            <h2 id="verification-heading">Xác minh dữ liệu</h2>
+            <p>Dấu vết nguồn và thời điểm đồng bộ</p>
+          </div>
+        </div>
+        <div class="source-badge">● MOCK DATA / NOT VERIFIED</div>
+        <div class="account-line">
+          <span>Tài khoản</span>
+          <strong>••••••4757</strong>
+        </div>
+        <div class="verification-row">
+          <span>Nguồn vị thế</span>
+          <strong>DNSE positions API</strong>
+        </div>
+        <div class="verification-row">
+          <span>Nguồn giao dịch</span>
+          <strong>DNSE order history</strong>
+        </div>
+        <div class="verification-row">
+          <span>Cập nhật</span>
+          <strong>09/09/2026 15:30:00</strong>
+        </div>
+        <div class="verification-row">
+          <span>Số lệnh đã khớp</span>
+          <strong id="matched-count">4</strong>
+        </div>
+        <div class="hash-box">
+          SHA-256 SNAPSHOT<br>
+          Chưa có — hash sẽ được tạo sau khi kết nối dữ liệu thật.
+        </div>
+        <p class="privacy-note">
+          API key, số tài khoản đầy đủ, order ID, deal ID và loan package không được xuất sang trang công khai.
+        </p>
+      </aside>
+    </section>
+
+    <footer>
+      <span>MBB PERFORMANCE LEDGER · STATIC HTML PROTOTYPE</span>
+      <span>Không phải khuyến nghị đầu tư · Dữ liệu đang hiển thị là mô phỏng</span>
+    </footer>
+  </main>
+
+  <script>
+    const portfolio = {
+      symbol: "MBB",
+      currentPrice: 25850,
+      previousClose: 25600,
+      averageCost: 22611,
+      quantity: 10000,
+      realizedNetPnl: 6362800,
+    };
+
+    const trades = [
+      { date: "12/05/2026 10:18", side: "BUY", price: 20800, quantity: 3000, netPnl: null },
+      { date: "03/06/2026 09:47", side: "BUY", price: 22150, quantity: 4000, netPnl: null },
+      { date: "21/07/2026 13:26", side: "SELL", price: 24800, quantity: 2000, netPnl: 6362800 },
+      { date: "19/08/2026 10:05", side: "BUY", price: 23650, quantity: 5000, netPnl: null },
+    ];
+
+    const chartData = [
+      { date: "12/05", price: 20800, cost: 20800, trade: "BUY" },
+      { date: "19/05", price: 21400, cost: 20800 },
+      { date: "26/05", price: 21950, cost: 20800 },
+      { date: "03/06", price: 22150, cost: 21571, trade: "BUY" },
+      { date: "12/06", price: 23000, cost: 21571 },
+      { date: "24/06", price: 22800, cost: 21571 },
+      { date: "07/07", price: 23900, cost: 21571 },
+      { date: "21/07", price: 24800, cost: 21571, trade: "SELL" },
+      { date: "29/07", price: 24250, cost: 21571 },
+      { date: "08/08", price: 23100, cost: 21571 },
+      { date: "19/08", price: 23650, cost: 22611, trade: "BUY" },
+      { date: "25/08", price: 24150, cost: 22611 },
+      { date: "01/09", price: 24900, cost: 22611 },
+      { date: "05/09", price: 25600, cost: 22611 },
+      { date: "09/09", price: 25850, cost: 22611 },
+    ];
+
+    const formatNumber = (value) => new Intl.NumberFormat("vi-VN").format(Math.round(value));
+    const formatPercent = (value) => `${value >= 0 ? "+" : ""}${value.toLocaleString("vi-VN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}%`;
+    const formatMillions = (value, signed = false) => {
+      const prefix = signed && value >= 0 ? "+" : "";
+      return `${prefix}${(value / 1000000).toLocaleString("vi-VN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })} triệu`;
+    };
+
+    function populateSummary() {
+      const costValue = portfolio.averageCost * portfolio.quantity;
+      const marketValue = portfolio.currentPrice * portfolio.quantity;
+      const unrealizedPnl = marketValue - costValue;
+      const positionReturn = unrealizedPnl / costValue * 100;
+      const dailyChange = portfolio.currentPrice - portfolio.previousClose;
+      const dailyChangePercent = dailyChange / portfolio.previousClose * 100;
+
+      document.querySelector("#current-price").textContent = formatNumber(portfolio.currentPrice);
+      document.querySelector("#daily-change").textContent =
+        `${dailyChange >= 0 ? "▲" : "▼"} ${formatNumber(Math.abs(dailyChange))} · ${formatPercent(dailyChangePercent)} hôm nay`;
+      document.querySelector("#average-cost").textContent = formatNumber(portfolio.averageCost);
+      document.querySelector("#open-quantity").textContent = `${formatNumber(portfolio.quantity)} cp`;
+      document.querySelector("#position-return").textContent = formatPercent(positionReturn);
+      document.querySelector("#ring-return").textContent = formatPercent(positionReturn);
+      document.querySelector("#cost-value").textContent = formatMillions(costValue);
+      document.querySelector("#market-value").textContent = formatMillions(marketValue);
+      document.querySelector("#unrealized-pnl").textContent = formatMillions(unrealizedPnl, true);
+      document.querySelector("#realized-pnl").textContent = formatMillions(portfolio.realizedNetPnl, true);
+      document.querySelector("#matched-count").textContent = formatNumber(trades.length);
+    }
+
+    function renderTrades(side = "ALL") {
+      const rows = trades
+        .filter((trade) => side === "ALL" || trade.side === side)
+        .slice()
+        .reverse()
+        .map((trade) => {
+          const value = trade.price * trade.quantity;
+          const pnl = trade.netPnl === null ? "—" : formatMillions(trade.netPnl, true);
+          const pnlClass = trade.netPnl === null ? "" : trade.netPnl >= 0 ? "positive" : "negative";
+          const sideLabel = trade.side === "BUY" ? "MUA" : "BÁN";
+          return `
+            <tr>
+              <td>${trade.date}</td>
+              <td><span class="side ${trade.side.toLowerCase()}">${sideLabel}</span></td>
+              <td>${formatNumber(trade.price)}</td>
+              <td>${formatNumber(trade.quantity)}</td>
+              <td>${formatNumber(value)}</td>
+              <td class="${pnlClass}">${pnl}</td>
+            </tr>`;
+        })
+        .join("");
+      document.querySelector("#trade-rows").innerHTML = rows;
+    }
+
+    const canvas = document.querySelector("#performance-chart");
+    const tooltip = document.querySelector("#chart-tooltip");
+    let selectedRange = chartData.length;
+    let chartPoints = [];
+
+    function drawChart() {
+      const context = canvas.getContext("2d");
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.round(rect.width * ratio);
+      canvas.height = Math.round(rect.height * ratio);
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      const data = chartData.slice(-selectedRange);
+      const width = rect.width;
+      const height = rect.height;
+      const padding = { top: 24, right: 66, bottom: 36, left: 12 };
+      const plotWidth = width - padding.left - padding.right;
+      const plotHeight = height - padding.top - padding.bottom;
+      const values = data.flatMap((item) => [item.price, item.cost]);
+      const rawMin = Math.min(...values);
+      const rawMax = Math.max(...values);
+      const margin = Math.max((rawMax - rawMin) * 0.17, 300);
+      const minValue = rawMin - margin;
+      const maxValue = rawMax + margin;
+      const x = (index) => padding.left + (plotWidth * index) / Math.max(data.length - 1, 1);
+      const y = (value) => padding.top + plotHeight - ((value - minValue) / (maxValue - minValue)) * plotHeight;
+
+      context.clearRect(0, 0, width, height);
+      context.font = '10px "SFMono-Regular", Consolas, monospace';
+      context.lineWidth = 1;
+
+      for (let index = 0; index <= 4; index += 1) {
+        const lineY = padding.top + plotHeight * index / 4;
+        const value = maxValue - (maxValue - minValue) * index / 4;
+        context.beginPath();
+        context.strokeStyle = "rgba(145, 255, 207, 0.10)";
+        context.moveTo(padding.left, lineY);
+        context.lineTo(width - padding.right + 8, lineY);
+        context.stroke();
+        context.fillStyle = "#78998d";
+        context.textAlign = "left";
+        context.fillText(formatNumber(value), width - padding.right + 14, lineY + 3);
+      }
+
+      function drawSeries(key, color, dashed = false) {
+        context.beginPath();
+        context.strokeStyle = color;
+        context.lineWidth = key === "price" ? 2.4 : 1.7;
+        context.setLineDash(dashed ? [6, 6] : []);
+        data.forEach((item, index) => {
+          const pointX = x(index);
+          const pointY = y(item[key]);
+          if (index === 0) context.moveTo(pointX, pointY);
+          else context.lineTo(pointX, pointY);
+        });
+        context.stroke();
+        context.setLineDash([]);
+      }
+
+      drawSeries("cost", "#52d9ed", true);
+
+      const gradient = context.createLinearGradient(0, padding.top, 0, height - padding.bottom);
+      gradient.addColorStop(0, "rgba(83, 245, 166, 0.22)");
+      gradient.addColorStop(1, "rgba(83, 245, 166, 0)");
+      context.beginPath();
+      data.forEach((item, index) => {
+        const pointX = x(index);
+        const pointY = y(item.price);
+        if (index === 0) context.moveTo(pointX, pointY);
+        else context.lineTo(pointX, pointY);
+      });
+      context.lineTo(x(data.length - 1), height - padding.bottom);
+      context.lineTo(x(0), height - padding.bottom);
+      context.closePath();
+      context.fillStyle = gradient;
+      context.fill();
+      drawSeries("price", "#53f5a6");
+
+      chartPoints = data.map((item, index) => ({
+        ...item,
+        x: x(index),
+        y: y(item.price),
+      }));
+
+      chartPoints.forEach((point) => {
+        if (!point.trade) return;
+        const isBuy = point.trade === "BUY";
+        context.beginPath();
+        context.fillStyle = isBuy ? "#53f5a6" : "#ffd166";
+        if (isBuy) {
+          context.moveTo(point.x, point.y - 10);
+          context.lineTo(point.x - 6, point.y + 1);
+          context.lineTo(point.x + 6, point.y + 1);
+        } else {
+          context.moveTo(point.x, point.y + 10);
+          context.lineTo(point.x - 6, point.y - 1);
+          context.lineTo(point.x + 6, point.y - 1);
+        }
+        context.closePath();
+        context.fill();
+      });
+
+      const labelIndexes = new Set([0, Math.floor((data.length - 1) / 2), data.length - 1]);
+      context.fillStyle = "#78998d";
+      context.textAlign = "center";
+      labelIndexes.forEach((index) => {
+        context.fillText(data[index].date, x(index), height - 10);
+      });
+    }
+
+    canvas.addEventListener("mousemove", (event) => {
+      if (!chartPoints.length) return;
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const point = chartPoints.reduce((nearest, candidate) =>
+        Math.abs(candidate.x - mouseX) < Math.abs(nearest.x - mouseX) ? candidate : nearest
+      );
+      tooltip.innerHTML = `
+        <strong>${point.date}${point.trade ? ` · ${point.trade}` : ""}</strong><br>
+        Giá MBB&nbsp;&nbsp; ${formatNumber(point.price)}<br>
+        Giá vốn&nbsp;&nbsp; ${formatNumber(point.cost)}`;
+      tooltip.style.left = `${Math.min(Math.max(point.x, 88), rect.width - 88)}px`;
+      tooltip.style.top = `${Math.max(point.y, 74)}px`;
+      tooltip.style.opacity = "1";
+    });
+
+    canvas.addEventListener("mouseleave", () => {
+      tooltip.style.opacity = "0";
+    });
+
+    document.querySelectorAll(".chart-controls button").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".chart-controls button").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        selectedRange = Number(button.dataset.range);
+        drawChart();
+      });
+    });
+
+    document.querySelectorAll(".filter-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".filter-button").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        renderTrades(button.dataset.side);
+      });
+    });
+
+    populateSummary();
+    renderTrades();
+    drawChart();
+    window.addEventListener("resize", drawChart);
+  </script>
+</body>
+</html>
