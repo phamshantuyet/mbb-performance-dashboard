@@ -752,7 +752,7 @@
           </div>
           <div class="price-block">
             <div class="current-price" id="current-price">—</div>
-            <div class="change" id="daily-change">Giá khớp gần nhất</div>
+            <div class="change" id="daily-change">Giá thị trường từ deal OPEN</div>
           </div>
         </div>
         <div class="position-summary">
@@ -777,13 +777,13 @@
           <div class="performance-ring" id="performance-ring" aria-label="Hiệu suất vị thế theo giá khớp gần nhất">
             <div class="ring-copy">
               <strong id="ring-return">—</strong>
-              <span>Theo giá khớp cuối</span>
+              <span>Deal OPEN DNSE</span>
             </div>
           </div>
         </div>
         <div class="benchmark">
-          <span>Lãi ròng đã thực hiện</span>
-          <strong id="benchmark-realized">—</strong>
+          <span>Giá hòa vốn</span>
+          <strong id="break-even-price">—</strong>
         </div>
       </aside>
     </section>
@@ -798,7 +798,7 @@
       </article>
       <article class="card metric-card">
         <div class="metric-label">
-          <span>Giá trị theo lần khớp cuối</span>
+          <span>Giá trị thị trường</span>
           <span class="metric-icon">◆</span>
         </div>
         <strong class="metric-value" id="market-value">—</strong>
@@ -812,18 +812,18 @@
       </article>
       <article class="card metric-card">
         <div class="metric-label">
-          <span>Lãi ròng đã thực hiện</span>
+          <span>Số deal đang mở</span>
           <span class="metric-icon">✓</span>
         </div>
-        <strong class="metric-value" id="realized-pnl">—</strong>
+        <strong class="metric-value" id="open-deal-count">—</strong>
       </article>
     </section>
 
     <section class="card chart-card" aria-labelledby="chart-heading">
       <div class="section-title">
         <div>
-          <h2 id="chart-heading">Giá khớp MBB và giá vốn</h2>
-          <p>Điểm BUY/SELL được dựng từ lịch sử lệnh đã khớp</p>
+          <h2 id="chart-heading">Lịch sử giá khớp MBB</h2>
+          <p>Điểm BUY/SELL từ order history, chỉ tính từ 01/07/2026</p>
         </div>
         <div class="chart-controls" aria-label="Chọn khoảng thời gian">
           <button type="button" data-range-days="30">1M</button>
@@ -833,7 +833,6 @@
       </div>
       <div class="legend" aria-hidden="true">
         <span class="legend-item">Giá MBB</span>
-        <span class="legend-item cost">Giá vốn</span>
         <span><span class="positive">▲</span> BUY</span>
         <span><span style="color: var(--yellow)">▼</span> SELL</span>
       </div>
@@ -865,7 +864,7 @@
                 <th>Giá khớp TB</th>
                 <th>KL khớp</th>
                 <th>Giá trị</th>
-                <th>Lãi ròng</th>
+                <th>Trạng thái</th>
               </tr>
             </thead>
             <tbody id="trade-rows"></tbody>
@@ -887,7 +886,7 @@
         </div>
         <div class="verification-row">
           <span>Nguồn vị thế</span>
-          <strong>Giá vốn bình quân động</strong>
+          <strong id="position-source">DNSE get_positions (d.py)</strong>
         </div>
         <div class="verification-row">
           <span>Nguồn giao dịch</span>
@@ -902,8 +901,8 @@
           <strong id="matched-count">—</strong>
         </div>
         <div class="verification-row">
-          <span>Thuế/phí trên giá trị bán</span>
-          <strong id="sell-cost-rate">0,19%</strong>
+          <span>Deal cập nhật</span>
+          <strong id="deal-updated-at">—</strong>
         </div>
         <div class="hash-box" id="snapshot-hash">
           SHA-256 SNAPSHOT<br>
@@ -917,7 +916,7 @@
 
     <footer>
       <span>MBB PERFORMANCE LEDGER · TỪ 01/07/2026</span>
-      <span>Không phải khuyến nghị đầu tư · Giá hiện tại không được lấy từ order history</span>
+      <span>Không phải khuyến nghị đầu tư · Vị thế lấy từ deal OPEN trên DNSE</span>
     </footer>
   </main>
 
@@ -927,19 +926,16 @@
 {
   "portfolio": {
     "symbol": "MBB",
-    "referencePrice": 20050,
-    "averageCost": 20286.6667,
+    "referencePrice": 20000,
+    "averageCost": 20276.6666,
+    "breakEvenPrice": 20308.0245,
     "quantity": 15,
-    "costValue": 304300,
-    "referenceValue": 300750,
-    "unrealizedPnl": -3550,
-    "positionReturn": -1.1666,
-    "realizedGrossPnl": -200,
-    "sellCosts": 38.285,
-    "realizedNetPnl": -238.285,
-    "sellCostRate": 0.0019,
-    "lastTradeSide": "BUY",
-    "lastTradeDate": "09/09/2026 06:26"
+    "costValue": 304149.999,
+    "referenceValue": 300000,
+    "unrealizedPnl": -4149.999,
+    "positionReturn": -1.3645,
+    "openDealCount": 1,
+    "dealUpdatedAt": "09/09/2026 11:30:41"
   },
   "trades": [
     {
@@ -948,10 +944,7 @@
       "isoDate": "2026-08-11T12:47:45+07:00",
       "side": "BUY",
       "price": 20500,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20500,
-      "holdingAfter": 1
+      "quantity": 1
     },
     {
       "date": "13/08/2026 20:30",
@@ -959,10 +952,7 @@
       "isoDate": "2026-08-13T20:30:54+07:00",
       "side": "BUY",
       "price": 20200,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20350,
-      "holdingAfter": 2
+      "quantity": 1
     },
     {
       "date": "14/08/2026 09:21",
@@ -970,10 +960,7 @@
       "isoDate": "2026-08-14T09:21:52+07:00",
       "side": "SELL",
       "price": 20150,
-      "quantity": 1,
-      "netPnl": -238.285,
-      "costAfter": 20350,
-      "holdingAfter": 1
+      "quantity": 1
     },
     {
       "date": "17/08/2026 12:00",
@@ -981,10 +968,7 @@
       "isoDate": "2026-08-17T12:00:45+07:00",
       "side": "BUY",
       "price": 20050,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20200,
-      "holdingAfter": 2
+      "quantity": 1
     },
     {
       "date": "21/08/2026 09:09",
@@ -992,10 +976,7 @@
       "isoDate": "2026-08-21T09:09:48+07:00",
       "side": "BUY",
       "price": 20250,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20216.6667,
-      "holdingAfter": 3
+      "quantity": 1
     },
     {
       "date": "03/09/2026 13:38",
@@ -1003,10 +984,7 @@
       "isoDate": "2026-09-03T13:38:47+07:00",
       "side": "BUY",
       "price": 20750,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20350,
-      "holdingAfter": 4
+      "quantity": 1
     },
     {
       "date": "07/09/2026 07:34",
@@ -1014,10 +992,7 @@
       "isoDate": "2026-09-07T07:34:35+07:00",
       "side": "BUY",
       "price": 20500,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20380,
-      "holdingAfter": 5
+      "quantity": 1
     },
     {
       "date": "07/09/2026 07:34",
@@ -1025,10 +1000,7 @@
       "isoDate": "2026-09-07T07:34:35+07:00",
       "side": "BUY",
       "price": 20450,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20391.6667,
-      "holdingAfter": 6
+      "quantity": 1
     },
     {
       "date": "07/09/2026 07:34",
@@ -1036,10 +1008,7 @@
       "isoDate": "2026-09-07T07:34:35+07:00",
       "side": "BUY",
       "price": 20400,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20392.8571,
-      "holdingAfter": 7
+      "quantity": 1
     },
     {
       "date": "07/09/2026 07:34",
@@ -1047,10 +1016,7 @@
       "isoDate": "2026-09-07T07:34:35+07:00",
       "side": "BUY",
       "price": 20350,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20387.5,
-      "holdingAfter": 8
+      "quantity": 1
     },
     {
       "date": "07/09/2026 07:34",
@@ -1058,10 +1024,7 @@
       "isoDate": "2026-09-07T07:34:35+07:00",
       "side": "BUY",
       "price": 20300,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20377.7778,
-      "holdingAfter": 9
+      "quantity": 1
     },
     {
       "date": "07/09/2026 07:34",
@@ -1069,10 +1032,7 @@
       "isoDate": "2026-09-07T07:34:35+07:00",
       "side": "BUY",
       "price": 20250,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20365,
-      "holdingAfter": 10
+      "quantity": 1
     },
     {
       "date": "07/09/2026 07:34",
@@ -1080,10 +1040,7 @@
       "isoDate": "2026-09-07T07:34:35+07:00",
       "side": "BUY",
       "price": 20200,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20350,
-      "holdingAfter": 11
+      "quantity": 1
     },
     {
       "date": "07/09/2026 07:34",
@@ -1091,10 +1048,7 @@
       "isoDate": "2026-09-07T07:34:35+07:00",
       "side": "BUY",
       "price": 20150,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20333.3333,
-      "holdingAfter": 12
+      "quantity": 1
     },
     {
       "date": "08/09/2026 08:19",
@@ -1102,10 +1056,7 @@
       "isoDate": "2026-09-08T08:19:53+07:00",
       "side": "BUY",
       "price": 20150,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20319.2308,
-      "holdingAfter": 13
+      "quantity": 1
     },
     {
       "date": "09/09/2026 06:26",
@@ -1113,10 +1064,7 @@
       "isoDate": "2026-09-09T06:26:36+07:00",
       "side": "BUY",
       "price": 20100,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20303.5714,
-      "holdingAfter": 14
+      "quantity": 1
     },
     {
       "date": "09/09/2026 06:26",
@@ -1124,23 +1072,20 @@
       "isoDate": "2026-09-09T06:26:36+07:00",
       "side": "BUY",
       "price": 20050,
-      "quantity": 1,
-      "netPnl": null,
-      "costAfter": 20286.6667,
-      "holdingAfter": 15
+      "quantity": 1
     }
   ],
   "meta": {
-    "source": "DNSE order history / buysell.py / SQLite",
-    "generatedAt": "2026-09-09T13:39:23+07:00",
-    "generatedAtDisplay": "09/09/2026 13:39:23",
-    "sourceUpdatedAt": "2026-09-09T06:39:23.136956+00:00",
+    "positionsSource": "DNSE get_positions API",
+    "ordersSource": "DNSE order history / buysell.py / SQLite",
+    "generatedAt": "2026-09-09T13:51:24+07:00",
+    "generatedAtDisplay": "09/09/2026 13:51:24",
+    "sourceUpdatedAt": "2026-09-09T06:51:24.085910+00:00",
     "dataFrom": "2026-07-01",
     "dataTo": "2026-09-09",
     "matchedOrderCount": 17,
     "accountMasked": "••••••4757",
-    "sellCostRate": 0.0019,
-    "sha256": "110d6043099a6719e042b8d2857bf9e2d825c029837fa63a65373b950946be02"
+    "sha256": "a33fe7be6adde546798d39452c58d604c87b4e02d88241c1370a7f991f591cc1"
   }
 }
     /* MBB_DASHBOARD_DATA_END */
@@ -1151,7 +1096,6 @@
       date: trade.shortDate,
       isoDate: trade.isoDate,
       price: trade.price,
-      cost: trade.costAfter,
       trade: trade.side,
     }));
 
@@ -1162,6 +1106,9 @@
     })}%`;
     const formatMillions = (value, signed = false) => {
       const prefix = signed && value >= 0 ? "+" : "";
+      if (Math.abs(value) < 1000000) {
+        return `${prefix}${formatNumber(value)} đ`;
+      }
       return `${prefix}${(value / 1000000).toLocaleString("vi-VN", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -1176,11 +1123,10 @@
     function populateSummary() {
       const positionReturn = Number(portfolio.positionReturn || 0);
       const referencePrice = Number(portfolio.referencePrice || 0);
-      const lastSide = portfolio.lastTradeSide === "BUY" ? "MUA" : "BÁN";
 
       document.querySelector("#current-price").textContent = formatNumber(referencePrice);
       document.querySelector("#daily-change").textContent =
-        `Giá khớp gần nhất · ${lastSide} · ${portfolio.lastTradeDate}`;
+        `${portfolio.openDealCount} deal OPEN · cập nhật ${portfolio.dealUpdatedAt}`;
       document.querySelector("#average-cost").textContent = formatNumber(portfolio.averageCost);
       document.querySelector("#open-quantity").textContent = `${formatNumber(portfolio.quantity)} cp`;
       const positionReturnElement = document.querySelector("#position-return");
@@ -1192,11 +1138,9 @@
       document.querySelector("#cost-value").textContent = formatMillions(portfolio.costValue);
       document.querySelector("#market-value").textContent = formatMillions(portfolio.referenceValue);
       document.querySelector("#unrealized-pnl").textContent = formatMillions(portfolio.unrealizedPnl, true);
-      document.querySelector("#realized-pnl").textContent = formatMillions(portfolio.realizedNetPnl, true);
-      document.querySelector("#benchmark-realized").textContent = formatMillions(portfolio.realizedNetPnl, true);
+      document.querySelector("#open-deal-count").textContent = formatNumber(portfolio.openDealCount);
+      document.querySelector("#break-even-price").textContent = formatNumber(portfolio.breakEvenPrice);
       setSignedClass(document.querySelector("#unrealized-pnl"), portfolio.unrealizedPnl);
-      setSignedClass(document.querySelector("#realized-pnl"), portfolio.realizedNetPnl);
-      setSignedClass(document.querySelector("#benchmark-realized"), portfolio.realizedNetPnl);
       document.querySelector("#performance-ring").style.background =
         `radial-gradient(circle at center, var(--surface) 58%, transparent 59%), ` +
         `conic-gradient(${positionReturn >= 0 ? "var(--green)" : "var(--red)"} 0 ` +
@@ -1207,13 +1151,10 @@
       document.querySelector("#data-banner-text").textContent =
         `Dữ liệu thật: ${meta.matchedOrderCount} lệnh MBB đã khớp từ ${meta.dataFrom} đến ${meta.dataTo}.`;
       document.querySelector("#account-masked").textContent = meta.accountMasked;
+      document.querySelector("#position-source").textContent = meta.positionsSource;
       document.querySelector("#updated-at").textContent = meta.generatedAtDisplay;
       document.querySelector("#matched-count").textContent = formatNumber(meta.matchedOrderCount);
-      document.querySelector("#sell-cost-rate").textContent =
-        `${(Number(meta.sellCostRate) * 100).toLocaleString("vi-VN", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 4,
-        })}%`;
+      document.querySelector("#deal-updated-at").textContent = portfolio.dealUpdatedAt;
       document.querySelector("#snapshot-hash").innerHTML =
         `SHA-256 SNAPSHOT<br>${meta.sha256}`;
     }
@@ -1225,8 +1166,6 @@
         .reverse()
         .map((trade) => {
           const value = trade.price * trade.quantity;
-          const pnl = trade.netPnl === null ? "—" : formatMillions(trade.netPnl, true);
-          const pnlClass = trade.netPnl === null ? "" : trade.netPnl >= 0 ? "positive" : "negative";
           const sideLabel = trade.side === "BUY" ? "MUA" : "BÁN";
           return `
             <tr>
@@ -1235,7 +1174,7 @@
               <td>${formatNumber(trade.price)}</td>
               <td>${formatNumber(trade.quantity)}</td>
               <td>${formatNumber(value)}</td>
-              <td class="${pnlClass}">${pnl}</td>
+              <td class="positive">ĐÃ KHỚP</td>
             </tr>`;
         })
         .join("");
@@ -1274,7 +1213,7 @@
       const padding = { top: 24, right: 66, bottom: 36, left: 12 };
       const plotWidth = width - padding.left - padding.right;
       const plotHeight = height - padding.top - padding.bottom;
-      const values = data.flatMap((item) => [item.price, item.cost]);
+      const values = data.map((item) => item.price);
       const rawMin = Math.min(...values);
       const rawMax = Math.max(...values);
       const margin = Math.max((rawMax - rawMin) * 0.17, 300);
@@ -1314,8 +1253,6 @@
         context.stroke();
         context.setLineDash([]);
       }
-
-      drawSeries("cost", "#52d9ed", true);
 
       const gradient = context.createLinearGradient(0, padding.top, 0, height - padding.bottom);
       gradient.addColorStop(0, "rgba(83, 245, 166, 0.22)");
@@ -1375,8 +1312,7 @@
       );
       tooltip.innerHTML = `
         <strong>${point.date}${point.trade ? ` · ${point.trade}` : ""}</strong><br>
-        Giá MBB&nbsp;&nbsp; ${formatNumber(point.price)}<br>
-        Giá vốn&nbsp;&nbsp; ${formatNumber(point.cost)}`;
+        Giá khớp MBB&nbsp;&nbsp; ${formatNumber(point.price)}`;
       tooltip.style.left = `${Math.min(Math.max(point.x, 88), rect.width - 88)}px`;
       tooltip.style.top = `${Math.max(point.y, 74)}px`;
       tooltip.style.opacity = "1";
