@@ -417,6 +417,48 @@
       letter-spacing: -0.04em;
     }
 
+    .strategy-performance {
+      margin-bottom: 18px;
+      padding: 24px;
+    }
+
+    .performance-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .performance-item {
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(6, 16, 14, 0.35);
+    }
+
+    .performance-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .performance-item strong {
+      display: block;
+      margin-top: 9px;
+      overflow: hidden;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 16px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .performance-note {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
     .positive {
       color: var(--green) !important;
     }
@@ -714,6 +756,7 @@
       .position-card,
       .performance-card,
       .strategy-card,
+      .strategy-performance,
       .chart-card,
       .ledger-card,
       .verification-card {
@@ -749,6 +792,10 @@
 
       .metrics {
         grid-template-columns: 1fr;
+      }
+
+      .performance-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
 
       .metric-card {
@@ -890,6 +937,38 @@
       </article>
     </section>
 
+    <section class="card strategy-performance" aria-labelledby="performance-heading">
+      <div class="section-title">
+        <div>
+          <h2 id="performance-heading">Hiệu suất theo thời gian</h2>
+          <p>Tổng hợp toàn bộ dòng tiền BUY/SELL và giá trị vị thế đang giữ</p>
+        </div>
+      </div>
+      <div class="performance-grid">
+        <div class="performance-item">
+          <span>Thời gian đầu tư</span>
+          <strong id="investment-duration">—</strong>
+        </div>
+        <div class="performance-item">
+          <span>Tổng tiền đã mua</span>
+          <strong id="gross-buy-value">—</strong>
+        </div>
+        <div class="performance-item">
+          <span>Tiền bán đã thu</span>
+          <strong id="gross-sell-value">—</strong>
+        </div>
+        <div class="performance-item">
+          <span>Vốn ròng đang sử dụng</span>
+          <strong id="net-invested-value">—</strong>
+        </div>
+        <div class="performance-item">
+          <span>Lãi/lỗ tổng</span>
+          <strong id="total-pnl">—</strong>
+        </div>
+      </div>
+      <p class="performance-note" id="performance-note">—</p>
+    </section>
+
     <section class="card chart-card" aria-labelledby="chart-heading">
       <div class="section-title">
         <div>
@@ -1008,6 +1087,17 @@
     "openDealCount": 1,
     "dealUpdatedAt": "11/09/2026 11:30:47",
     "marketPriceUpdatedAt": "2026-09-11 11:29:59.587"
+  },
+  "performance": {
+    "firstTradeAt": "11/08/2026 12:47:45",
+    "durationDays": 31,
+    "durationMonths": 1.0,
+    "grossBuyValue": 444500,
+    "grossSellValue": 20150,
+    "netInvestedValue": 424350,
+    "totalPnl": -8550,
+    "totalReturn": -1.9235,
+    "note": "Lãi/lỗ theo dòng tiền, chưa trừ phí và thuế"
   },
   "trades": [
     {
@@ -1197,23 +1287,23 @@
   ],
   "meta": {
     "positionsSource": "buysell.py SQLite deals",
-    "marketPriceSource": "DNSE latest-trade API fallback",
+    "marketPriceSource": "DNSE latest-trade API fallback cache: mbb_close_price.json",
     "ordersSource": "DNSE order history / buysell.py / SQLite",
-    "generatedAt": "2026-09-11T12:31:13+07:00",
-    "generatedAtDisplay": "11/09/2026 12:31:13",
+    "generatedAt": "2026-09-11T12:46:44+07:00",
+    "generatedAtDisplay": "11/09/2026 12:46:44",
     "timezone": "Asia/Ho_Chi_Minh (GMT+7)",
-    "sourceUpdatedAt": "2026-09-11T05:31:13.128560+00:00",
+    "sourceUpdatedAt": "2026-09-11T05:46:44.584775+00:00",
     "dataFrom": "2026-07-01",
     "dataTo": "2026-09-11",
     "matchedOrderCount": 23,
     "accountMasked": "••••••4757",
-    "sha256": "8c46fb80c2f55e400b92e305cff3f20bf1c0b7ea7b1eb739f9712cdee4584000"
+    "sha256": "572a04c1faa37acd3ebb78886465afcb9a30df53eaaeb847b254ddb701a46fee"
   }
 }
     /* MBB_DASHBOARD_DATA_END */
     ;
 
-    const { portfolio, trades, meta } = dashboardData;
+    const { portfolio, performance, trades, meta } = dashboardData;
     const chartData = trades.map((trade) => ({
       date: trade.shortDate,
       isoDate: trade.isoDate,
@@ -1279,6 +1369,20 @@
       document.querySelector("#deal-updated-at").textContent = portfolio.dealUpdatedAt;
       document.querySelector("#snapshot-hash").innerHTML =
         `SHA-256 SNAPSHOT<br>${meta.sha256}`;
+
+      const duration = `${performance.durationMonths.toLocaleString("vi-VN", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      })} tháng · ${formatNumber(performance.durationDays)} ngày`;
+      document.querySelector("#investment-duration").textContent = duration;
+      document.querySelector("#gross-buy-value").textContent = formatMillions(performance.grossBuyValue);
+      document.querySelector("#gross-sell-value").textContent = formatMillions(performance.grossSellValue);
+      document.querySelector("#net-invested-value").textContent = formatMillions(performance.netInvestedValue);
+      const totalPnlElement = document.querySelector("#total-pnl");
+      totalPnlElement.textContent = formatMillions(performance.totalPnl, true);
+      setSignedClass(totalPnlElement, performance.totalPnl);
+      document.querySelector("#performance-note").textContent =
+        `${performance.note} · bắt đầu từ ${performance.firstTradeAt} · hiệu suất dòng tiền ${formatPercent(performance.totalReturn)}`;
     }
 
     function renderTrades(side = "ALL") {
