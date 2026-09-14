@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark">
+  <meta name="color-scheme" content="light">
   <title>MBB Performance Ledger — DNSE Order History</title>
   <style>
     :root {
@@ -852,17 +852,55 @@
       -webkit-font-smoothing: none;
     }
 
+    button:focus-visible {
+      outline: 1px dotted #000000;
+      outline-offset: -4px;
+    }
+
     body::before {
       display: none;
     }
 
     .topbar {
       position: relative;
+      width: min(1180px, calc(100% - 24px));
       min-height: 32px;
+      margin: 12px auto 0;
       padding: 3px 4px;
       border: 2px outset #d4d0c8;
       background: #000080;
       backdrop-filter: none;
+    }
+
+    .topbar-actions,
+    .window-controls {
+      display: flex;
+      align-items: center;
+    }
+
+    .topbar-actions {
+      gap: 10px;
+    }
+
+    .window-controls {
+      gap: 2px;
+    }
+
+    .window-control {
+      display: grid;
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      place-items: center;
+      border: 2px outset #d4d0c8;
+      color: #000000;
+      background: #c0c0c0;
+      font: bold 11px/1 "MS Sans Serif", Tahoma, sans-serif;
+    }
+
+    .window-control:active {
+      border-style: inset;
+      padding: 1px 0 0 1px;
     }
 
     .brand {
@@ -912,7 +950,11 @@
 
     main {
       width: min(1180px, calc(100% - 24px));
-      padding: 18px 0 32px;
+      margin: 0 auto 24px;
+      padding: 10px;
+      border: 2px outset #d4d0c8;
+      border-top: 0;
+      background: #c0c0c0;
     }
 
     .card,
@@ -1053,8 +1095,22 @@
     }
 
     .performance-ring {
+      width: 100%;
+      height: 92px;
+      margin: 4px 0 12px;
       border: 2px inset #d4d0c8;
-      border-radius: 50%;
+      border-radius: 0;
+      background: #ffffff !important;
+      box-shadow: none;
+    }
+
+    .ring-copy strong {
+      font-size: 24px;
+    }
+
+    .ring-copy span {
+      color: #404040;
+      letter-spacing: 0;
     }
 
     .metrics {
@@ -1118,6 +1174,13 @@
       font-size: 11px;
     }
 
+    .chart-controls {
+      padding: 2px;
+      border: 2px inset #d4d0c8;
+      border-radius: 0;
+      background: #c0c0c0;
+    }
+
     .chart-controls button:active,
     .chart-controls button.active,
     .filter-button:active,
@@ -1130,6 +1193,31 @@
     .table-wrap {
       border: 2px inset #d4d0c8;
       background: #ffffff;
+    }
+
+    .chart-wrap {
+      height: 300px;
+      border: 2px inset #d4d0c8;
+      background: #ffffff;
+    }
+
+    .legend {
+      color: #404040;
+    }
+
+    .legend-item::before {
+      background: #000080;
+    }
+
+    .chart-tooltip {
+      padding: 6px 8px;
+      border: 1px solid #000000;
+      border-radius: 0;
+      color: #000000;
+      background: #ffffe1;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+      transition: none;
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
     }
 
     table th {
@@ -1155,6 +1243,16 @@
       border: 1px outset #d4d0c8;
     }
 
+    .side.buy {
+      color: #006400;
+      background: #d4d0c8;
+    }
+
+    .side.sell {
+      color: #800000;
+      background: #d4d0c8;
+    }
+
     .source-badge,
     .hash-box {
       color: #000080;
@@ -1166,8 +1264,18 @@
     }
 
     footer {
-      color: #ffffff;
-      border-top-color: #c0c0c0;
+      gap: 4px;
+      padding: 8px 0 0;
+      color: #000000;
+      border-top: 0;
+      letter-spacing: 0;
+    }
+
+    footer span {
+      flex: 1 1 auto;
+      padding: 3px 5px;
+      border: 2px inset #d4d0c8;
+      background: #c0c0c0;
     }
 
     @media (max-width: 980px) {
@@ -1184,12 +1292,27 @@
       }
 
       .topbar {
+        width: min(100% - 12px, 1180px);
         min-height: 30px;
+        margin-top: 6px;
       }
 
       main {
         width: min(100% - 12px, 1180px);
-        padding-top: 8px;
+        padding: 6px;
+      }
+
+      .topbar-actions {
+        gap: 4px;
+      }
+
+      .window-control {
+        width: 17px;
+        height: 17px;
+      }
+
+      footer span {
+        width: 100%;
       }
     }
   </style>
@@ -1203,9 +1326,16 @@
         <span>DNSE Portfolio View</span>
       </div>
     </div>
-    <div class="market-status">
-      <span class="status-dot" aria-hidden="true"></span>
-      <span id="market-status-text">DNSE ORDER HISTORY</span>
+    <div class="topbar-actions">
+      <div class="market-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="market-status-text">DNSE ORDER HISTORY</span>
+      </div>
+      <div class="window-controls" aria-hidden="true">
+        <span class="window-control">_</span>
+        <span class="window-control">□</span>
+        <span class="window-control">×</span>
+      </div>
     </div>
   </header>
 
@@ -1829,11 +1959,11 @@
         const lineY = padding.top + plotHeight * index / 4;
         const value = maxValue - (maxValue - minValue) * index / 4;
         context.beginPath();
-        context.strokeStyle = "rgba(145, 255, 207, 0.10)";
+        context.strokeStyle = "#d4d0c8";
         context.moveTo(padding.left, lineY);
         context.lineTo(width - padding.right + 8, lineY);
         context.stroke();
-        context.fillStyle = "#78998d";
+        context.fillStyle = "#404040";
         context.textAlign = "left";
         context.fillText(formatNumber(value), width - padding.right + 14, lineY + 3);
       }
@@ -1854,8 +1984,8 @@
       }
 
       const gradient = context.createLinearGradient(0, padding.top, 0, height - padding.bottom);
-      gradient.addColorStop(0, "rgba(83, 245, 166, 0.22)");
-      gradient.addColorStop(1, "rgba(83, 245, 166, 0)");
+      gradient.addColorStop(0, "rgba(0, 0, 128, 0.16)");
+      gradient.addColorStop(1, "rgba(0, 0, 128, 0)");
       context.beginPath();
       data.forEach((item, index) => {
         const pointX = x(index);
@@ -1868,7 +1998,7 @@
       context.closePath();
       context.fillStyle = gradient;
       context.fill();
-      drawSeries("price", "#53f5a6");
+      drawSeries("price", "#000080");
 
       chartPoints = data.map((item, index) => ({
         ...item,
@@ -1880,7 +2010,7 @@
         if (!point.trade) return;
         const isBuy = point.trade === "BUY";
         context.beginPath();
-        context.fillStyle = isBuy ? "#53f5a6" : "#ffd166";
+        context.fillStyle = isBuy ? "#008000" : "#800000";
         if (isBuy) {
           context.moveTo(point.x, point.y - 10);
           context.lineTo(point.x - 6, point.y + 1);
@@ -1895,7 +2025,7 @@
       });
 
       const labelIndexes = new Set([0, Math.floor((data.length - 1) / 2), data.length - 1]);
-      context.fillStyle = "#78998d";
+      context.fillStyle = "#404040";
       context.textAlign = "center";
       labelIndexes.forEach((index) => {
         context.fillText(data[index].date, x(index), height - 10);
