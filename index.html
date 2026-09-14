@@ -835,6 +835,8 @@
       --cyan: #000080;
       --yellow: #808000;
       --red: #800000;
+      --active-title-start: #000080;
+      --active-title-end: #1084d0;
       --shadow: none;
       --radius: 0;
     }
@@ -868,7 +870,11 @@
       margin: 12px auto 0;
       padding: 3px 4px;
       border: 2px outset #d4d0c8;
-      background: #000080;
+      background: linear-gradient(
+        90deg,
+        var(--active-title-start) 0%,
+        var(--active-title-end) 100%
+      );
       backdrop-filter: none;
     }
 
@@ -1148,7 +1154,11 @@
       padding: 3px 5px;
       border: 2px outset #d4d0c8;
       color: #ffffff;
-      background: #000080;
+      background: linear-gradient(
+        90deg,
+        var(--active-title-start) 0%,
+        var(--active-title-end) 100%
+      );
     }
 
     .section-title h2,
@@ -1588,13 +1598,13 @@
     "unrealizedPnl": -9249.9981,
     "positionReturn": -2.1816,
     "openDealCount": 1,
-    "dealUpdatedAt": "11/09/2026 11:30:47",
+    "dealUpdatedAt": "11/09/2026 18:51:56",
     "marketPriceUpdatedAt": "2026-09-11 14:45:04.972"
   },
   "performance": {
     "firstTradeAt": "11/08/2026 12:47:45",
-    "durationDays": 31,
-    "durationMonths": 1.0,
+    "durationDays": 34,
+    "durationMonths": 1.1,
     "grossBuyValue": 444500,
     "grossSellValue": 20150,
     "netInvestedValue": 424350,
@@ -1792,15 +1802,15 @@
     "positionsSource": "buysell.py SQLite deals",
     "marketPriceSource": "DNSE get_close_price API",
     "ordersSource": "DNSE order history / buysell.py / SQLite",
-    "generatedAt": "2026-09-11T14:52:01+07:00",
-    "generatedAtDisplay": "11/09/2026 14:52:01",
+    "generatedAt": "2026-09-14T08:14:02+07:00",
+    "generatedAtDisplay": "14/09/2026 08:14:02",
     "timezone": "Asia/Ho_Chi_Minh (GMT+7)",
-    "sourceUpdatedAt": "2026-09-11T07:52:01.410960+00:00",
+    "sourceUpdatedAt": "2026-09-14T01:14:02.183862+00:00",
     "dataFrom": "2026-07-01",
-    "dataTo": "2026-09-11",
+    "dataTo": "2026-09-14",
     "matchedOrderCount": 23,
     "accountMasked": "••••••4757",
-    "sha256": "25f9fb932a452580b6efdc1efaa8ac4bf45c6dd24bd4143fe0043e08985567db"
+    "sha256": "48e73747619c54dd9942d637483e2f1f4cd3c467ffd4f6fbadd2f2c9bf83af01"
   }
 }
     /* MBB_DASHBOARD_DATA_END */
